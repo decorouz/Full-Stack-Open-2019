@@ -1,0 +1,13 @@
+title Sinlge Page App
+
+
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over browser:
+HTPP POST request to the 
+address new_note_spa contains 
+the new note as JSON-data 
+containing both the content of 
+the note (checking the implementation of spa.js) and the timestamp (date):
+end note
+server-->browser: {"message":"note created"}
