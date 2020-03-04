@@ -1,3 +1,2 @@
 # Full-Stack-Open-2019
-
-This repository contains my solutions to full stack open exercises
+A repository that contains the exercises of the Full Stack Open 2019 course offered by the University of Helsinki.
