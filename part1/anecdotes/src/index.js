@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
+const MaxVotes = props => {
+  const maxVote = Math.max(...props.votes);
+
+  const indexOfMax = props.votes.indexOf(maxVote);
+
+  if (maxVote === 0) {
+    return <p>No vote</p>;
+  }
+  return (
+    <p>
+      {props.anecdotes[indexOfMax]} <br />
+      has {maxVote} votes
+    </p>
+  );
+};
+
 const App = props => {
   const [selected, setSelected] = useState(0);
   const [votes, setVote] = useState(new Array(props.anecdotes.length).fill(0));
@@ -14,14 +30,20 @@ const App = props => {
   const randomNum = Math.floor(Math.random() * anecdotes.length);
 
   return (
-    <div>
+    <>
+      <h2>Anecdote of the day</h2>
       {props.anecdotes[selected]}
       <br /> has {votes[selected]} votes
       <div>
         <button onClick={() => voteIncreament(selected)}>vote</button>
         <button onClick={() => setSelected(randomNum)}>next anecdotes</button>
+
+        <div>
+          <h2>Anecdote with the most votes</h2>
+          <MaxVotes anecdotes={props.anecdotes} votes={votes} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
