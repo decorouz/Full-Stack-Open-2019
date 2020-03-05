@@ -20,24 +20,26 @@ const Content = ({ contents }) => {
   return <div>{partContent()}</div>;
 };
 
+const Total = ({ total }) => {
+  const sum =
+    total[0].exercises +
+    total[1].exercises +
+    total[2].exercises +
+    total[3].exercises;
+
+  return (
+    <div>
+      <h4>total of {sum} exercises </h4>
+    </div>
+  );
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header title={course.name} />
       <Content contents={course.parts} />
-    </div>
-  );
-};
-
-const Total = props => {
-  return (
-    <div>
-      <p>
-        Number of exercises{' '}
-        {props.course.parts[0].exercises +
-          props.course.parts[1].exercises +
-          props.course.parts[2].exercises}
-      </p>
+      <Total total={course.parts} />
     </div>
   );
 };
@@ -68,7 +70,6 @@ const App = () => {
   return (
     <div>
       <Course course={course} />
-      <Total course={course} />
     </div>
   );
 };
