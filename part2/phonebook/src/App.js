@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 
-const Person = props => {
-  return <div>{props.person.name}</div>;
-};
-
 const App = () => {
   const [persons, setPersons] = useState([{ name: 'Arto Hellas' }]);
   const [newName, setNewName] = useState('');
 
-  const row = () =>
-    persons.map(person => <div key={'name'}>{person.name}</div>);
+  const rowNames = () =>
+    persons.map(person => <div key={person.name}>{person.name}</div>);
 
   const handleNameChange = event => {
     setNewName(event.target.value);
@@ -17,11 +13,16 @@ const App = () => {
 
   const addName = event => {
     event.preventDefault();
-
-    const nameObject = {
+    const newPersonObject = {
       name: newName
     };
-    setPersons(persons.concat(nameObject));
+
+    const allNames = persons.map(person => person.name);
+
+    if (allNames.includes(newName)) {
+      return alert(`${newName} is already added to phonebook`);
+    }
+    setPersons(persons.concat(newPersonObject));
     setNewName('');
   };
 
@@ -37,7 +38,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {row()}
+      {rowNames()}
     </div>
   );
 };
