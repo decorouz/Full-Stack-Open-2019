@@ -11,6 +11,12 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
+    // const eventHandler = response => {
+    //   setPersons(response.data);
+    // };
+
+    // const promise = axios.get('http://localhost:3001/persons');
+    // promise.then(eventHandler);
     axios.get('http://localhost:3001/persons').then(response => {
       setPersons(response.data);
     });
