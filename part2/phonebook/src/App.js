@@ -55,7 +55,7 @@ const App = () => {
   const personsToShow = !filter
     ? persons
     : persons.filter(person =>
-        person.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+        person.name.toLowerCase().includes(filter.toLowerCase())
       );
 
   const rowNames = () =>
