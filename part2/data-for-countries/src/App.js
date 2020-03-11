@@ -15,6 +15,10 @@ const App = () => {
     setSearchQuery(event.target.value);
   };
 
+  const showCountryHandler = name => {
+    setSearchQuery(name);
+  };
+
   const filtered = !searchQuery
     ? []
     : countries.filter(country =>
@@ -22,7 +26,6 @@ const App = () => {
       );
 
   const renderCountries = () => {
-    console.log(filtered);
     if (filtered.length === 1) {
       const { name, capital, population, languages, flag } = filtered[0];
       return (
@@ -36,13 +39,19 @@ const App = () => {
               <li key={language.name}>{language.name}</li>
             ))}
           </ul>
-          <img style={{ width: '150px' }} src={flag} alt="" />
+          <img style={{ width: '200px' }} src={flag} alt="" />
+          <h3>Weather in {capital}</h3>
         </div>
       );
     }
 
     if (filtered.length <= 10) {
-      return filtered.map(filter => <div key={filter.name}>{filter.name}</div>);
+      return filtered.map(filter => (
+        <div key={filter.name}>
+          {filter.name}{' '}
+          <button onClick={() => showCountryHandler(filter.name)}>show</button>{' '}
+        </div>
+      ));
     }
 
     if (filtered.length > 10)
@@ -52,8 +61,7 @@ const App = () => {
   return (
     <>
       <h1>Finding Country</h1>
-      find countries
-      <input value={searchQuery} onChange={onChangeHandler} />
+      find countries <input value={searchQuery} onChange={onChangeHandler} />
       <div>{renderCountries()}</div>
     </>
   );
