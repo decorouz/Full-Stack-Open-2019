@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Weather from './components/Weather';
+import Country from './components/Country';
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -19,48 +21,42 @@ const App = () => {
     setSearchQuery(name);
   };
 
-  const filtered = !searchQuery
-    ? []
-    : countries.filter(country =>
-        country.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-
   const renderCountries = () => {
-    if (filtered.length === 1) {
-      const { name, capital, population, languages, flag } = filtered[0];
+    const filteredCountry = countries.filter(country =>
+      country.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const country = filteredCountry[0];
+
+    if (!searchQuery) {
+      return;
+    }
+
+    if (filteredCountry.length === 1) {
       return (
-        <div>
-          <h2>{name}</h2>
-          <p>capital {capital} </p>
-          <p>population {population}</p>
-          <h3>languages</h3>
-          <ul>
-            {languages.map(language => (
-              <li key={language.name}>{language.name}</li>
-            ))}
-          </ul>
-          <img style={{ width: '200px' }} src={flag} alt="" />
-          <h3>Weather in {capital}</h3>
-        </div>
+        <>
+          <Country country={country} />
+          <Weather city={country.capital} />
+        </>
       );
     }
 
-    if (filtered.length <= 10) {
-      return filtered.map(filter => (
-        <div key={filter.name}>
+    if (filteredCountry.length <= 10) {
+      return filteredCountry.map(filter => (
+        <div key={filter.alpha3Code}>
           {filter.name}{' '}
           <button onClick={() => showCountryHandler(filter.name)}>show</button>{' '}
         </div>
       ));
     }
 
-    if (filtered.length > 10)
+    if (filteredCountry.length > 10)
       return <p>Too many matches, specify another filter</p>;
   };
 
   return (
     <>
-      <h1>Finding Country</h1>
+      <h1>Basic Country Data</h1>
       find countries <input value={searchQuery} onChange={onChangeHandler} />
       <div>{renderCountries()}</div>
     </>
