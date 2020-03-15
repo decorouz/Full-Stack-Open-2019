@@ -3,6 +3,7 @@ import axios from 'axios';
 import Persons from './components/Persons';
 import PersonsForm from './components/PersonsForm';
 import Filter from './components/Filter';
+import phonebookServices from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -22,15 +23,15 @@ const App = () => {
     });
   }, []);
 
-  const handleNameChange = event => {
+  const nameHandler = event => {
     setNewName(event.target.value);
   };
 
-  const handleNumberChange = event => {
+  const numberHandler = event => {
     setNewPhoneNumber(event.target.value);
   };
 
-  const handleFilterChange = event => {
+  const filterHandler = event => {
     setFilter(event.target.value);
   };
 
@@ -47,9 +48,11 @@ const App = () => {
       return alert(`${newName} is already added to phonebook`);
     }
 
-    setPersons(persons.concat(newPersonObject));
-    setNewName('');
-    setNewPhoneNumber('');
+    phonebookServices.create(newPersonObject).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName('');
+      setNewPhoneNumber('');
+    });
   };
 
   const personsToShow = !filter
@@ -61,21 +64,21 @@ const App = () => {
   const rowNames = () =>
     personsToShow.map(person => (
       <div key={person.name}>
-        {person.name} {person.number}{' '}
+        {person.name}: {person.number}{' '}
       </div>
     ));
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter value={filter} onChange={handleFilterChange} />
+      <Filter value={filter} onChange={filterHandler} />
       <h2>Add a new</h2>
       <PersonsForm
         onSubmit={addName}
-        name={{ value: newName, onChange: handleNameChange }}
-        number={{ value: newPhoneNumber, onChange: handleNumberChange }}
+        name={{ value: newName, onChange: nameHandler }}
+        number={{ value: newPhoneNumber, onChange: numberHandler }}
       />
 
-      <h2>Numbers</h2>
+      <h2>Name and Numbers</h2>
       <Persons person={rowNames()} />
     </div>
   );
