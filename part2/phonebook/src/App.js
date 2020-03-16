@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import Persons from './components/Persons';
 import PersonsForm from './components/PersonsForm';
 import Filter from './components/Filter';
-import phonebookServices from './services/phonebook';
+import phoneServices from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,14 +12,8 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    // const eventHandler = response => {
-    //   setPersons(response.data);
-    // };
-
-    // const promise = axios.get('http://localhost:3001/persons');
-    // promise.then(eventHandler);
-    axios.get('http://localhost:3001/persons').then(response => {
-      setPersons(response.data);
+    phoneServices.getAll().then(initialPersons => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -35,7 +29,16 @@ const App = () => {
     setFilter(event.target.value);
   };
 
-  const addName = event => {
+  const deleteHandler = ({ id, name }) => {
+    if (window.confirm(`Delete ${name}`))
+      phoneServices.deleteItem(id).then(() => {
+        phoneServices.getAll().then(data => {
+          setPersons(data);
+        });
+      });
+  };
+
+  const addPerson = event => {
     event.preventDefault();
     const newPersonObject = {
       name: newName,
@@ -48,7 +51,7 @@ const App = () => {
       return alert(`${newName} is already added to phonebook`);
     }
 
-    phonebookServices.create(newPersonObject).then(returnedPerson => {
+    phoneServices.create(newPersonObject).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewPhoneNumber('');
@@ -65,15 +68,17 @@ const App = () => {
     personsToShow.map(person => (
       <div key={person.name}>
         {person.name}: {person.number}{' '}
+        <button onClick={() => deleteHandler(person)}>delete</button>
       </div>
     ));
+
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter value={filter} onChange={filterHandler} />
       <h2>Add a new</h2>
       <PersonsForm
-        onSubmit={addName}
+        onSubmit={addPerson}
         name={{ value: newName, onChange: nameHandler }}
         number={{ value: newPhoneNumber, onChange: numberHandler }}
       />
