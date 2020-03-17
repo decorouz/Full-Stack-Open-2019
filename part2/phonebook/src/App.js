@@ -12,6 +12,7 @@ const App = () => {
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [filter, setFilter] = useState('');
   const [notification, setNotification] = useState(null);
+  const [notificationTpye, setNotificationType] = useState('');
 
   useEffect(() => {
     phoneServices.getAll().then(initialPersons => {
@@ -36,7 +37,9 @@ const App = () => {
       phoneServices.remove(id).then(() => {
         phoneServices.getAll().then(data => {
           setPersons(data);
-          setNotification(`${name} was removed from server`);
+
+          setNotification(`${name} was removed from the phonebook`);
+          setNotificationType('successful');
           setTimeout(() => {
             setNotification(null);
           }, 5000);
@@ -73,6 +76,7 @@ const App = () => {
             );
 
             setNotification(`${returnedPerson.name} number was changed`);
+            setNotificationType('successful');
             setTimeout(() => {
               setNotification(null);
             }, 5000);
@@ -81,14 +85,21 @@ const App = () => {
             setNewPhoneNumber('');
           })
           .catch(error => {
-            console.log(error);
+            setNotificationType('unsuccessful');
+            setNotification(
+              `Information of ${isDuplicate.name} has already been removed from server`
+            );
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
           });
       }
     } else {
       phoneServices.create(newPersonObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
 
-        setNotification(`Added ${returnedPerson.name}`);
+        setNotification(`Added ${returnedPerson.name} successfully`);
+        setNotificationType('successful');
         setTimeout(() => {
           setNotification(null);
         }, 5000);
@@ -116,13 +127,15 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification message={notification} messageType={notificationTpye} />
       <Filter value={filter} onChange={filterHandler} />
       <h2>Add a new</h2>
       <PersonsForm
-        onSubmit={addPerson}
-        name={{ value: newName, onChange: nameHandler }}
-        number={{ value: newPhoneNumber, onChange: numberHandler }}
+        addPerson={addPerson}
+        newName={newName}
+        handleNameChange={nameHandler}
+        newPhoneNumber={newPhoneNumber}
+        handleNumberChange={numberHandler}
       />
 
       <h2>Name and Numbers</h2>
