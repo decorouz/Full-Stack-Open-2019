@@ -30,32 +30,55 @@ const App = () => {
   };
 
   const deleteHandler = ({ id, name }) => {
-    if (window.confirm(`Delete ${name}`))
-      phoneServices.deleteItem(id).then(() => {
+    if (window.confirm(`Delete ${name}`)) {
+      phoneServices.remove(id).then(() => {
         phoneServices.getAll().then(data => {
           setPersons(data);
         });
       });
+    }
   };
 
   const addPerson = event => {
     event.preventDefault();
+
     const newPersonObject = {
       name: newName,
       number: newPhoneNumber
     };
 
-    const allNames = persons.map(person => person.name);
+    const isDuplicate = persons.find(p => p.name === newPersonObject.name);
 
-    if (allNames.includes(newName)) {
-      return alert(`${newName} is already added to phonebook`);
+    if (isDuplicate) {
+      const id = isDuplicate.id;
+
+      if (
+        window.confirm(
+          `${isDuplicate.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        phoneServices
+          .update(id, newPersonObject)
+          .then(returnedPerson => {
+            setPersons(
+              persons.map(person =>
+                person.id !== id ? person : returnedPerson
+              )
+            );
+            setNewName('');
+            setNewPhoneNumber('');
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    } else {
+      phoneServices.create(newPersonObject).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewPhoneNumber('');
+      });
     }
-
-    phoneServices.create(newPersonObject).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewPhoneNumber('');
-    });
   };
 
   const personsToShow = !filter
