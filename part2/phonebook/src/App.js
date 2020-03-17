@@ -4,12 +4,14 @@ import Persons from './components/Persons';
 import PersonsForm from './components/PersonsForm';
 import Filter from './components/Filter';
 import phoneServices from './services/phonebook';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     phoneServices.getAll().then(initialPersons => {
@@ -34,6 +36,10 @@ const App = () => {
       phoneServices.remove(id).then(() => {
         phoneServices.getAll().then(data => {
           setPersons(data);
+          setNotification(`${name} was removed from server`);
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
         });
       });
     }
@@ -65,6 +71,12 @@ const App = () => {
                 person.id !== id ? person : returnedPerson
               )
             );
+
+            setNotification(`${returnedPerson.name} number was changed`);
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
+
             setNewName('');
             setNewPhoneNumber('');
           })
@@ -75,6 +87,12 @@ const App = () => {
     } else {
       phoneServices.create(newPersonObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
+
+        setNotification(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+
         setNewName('');
         setNewPhoneNumber('');
       });
@@ -98,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Filter value={filter} onChange={filterHandler} />
       <h2>Add a new</h2>
       <PersonsForm
